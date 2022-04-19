@@ -12,8 +12,8 @@ const SearchInput = styled.input`
     height:2em;
 `
 const Button = styled.button`
-    width:2.5em ;
-    height:2.5em ;
+    width:27px ;
+    height:27px ;
     
 `
 
