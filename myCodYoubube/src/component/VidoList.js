@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
 
-const Main = styled.main`
 
-`
 const ListUl = styled.ul`
 list-style: none;
     display: flex;
@@ -47,7 +45,7 @@ const LiChTitle = styled.p`
 
 const VidoList = ({data}) => {
     return (
-        <Main>
+        <main>
           <ListUl>
         {data.map((item,index) => (<Li key={index}><img src={item.snippet.thumbnails.medium.url} alt="img"/>
         <LiChTitle>{item.snippet.channelTitle}</LiChTitle>
@@ -55,7 +53,7 @@ const VidoList = ({data}) => {
         
         </Li>) )}
           </ListUl>   
-        </Main>
+        </main>
     );
 };
 

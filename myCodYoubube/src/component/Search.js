@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 
 
 const Form = styled.form`
 display:flex ;
-width:40%;
+flex-basis: 100% ;
+padding-right: 2% ;
 `
 
 const SearchInput = styled.input`
@@ -14,14 +15,19 @@ const SearchInput = styled.input`
 const Button = styled.button`
     width:27px ;
     height:27px ;
+    background-color: darkgrey ;
     
 `
-
+const ScImg = styled.img`
+    width: 100% ;
+  
+`
 
 const Search = ({setData}) => {
+    const inputRef = useRef() 
+    const mounted = useRef(false)
 
-
-    const [inputText,setInput] = useState("이세돌")
+    const [inputText,setInput] = useState("")
 
 
     const onChange = (e) =>{
@@ -30,6 +36,7 @@ const Search = ({setData}) => {
     
     
      const [don,setDon] = useState(true)
+     
       const onSubmit = (e)=>{
         e.preventDefault()
         
@@ -46,19 +53,49 @@ const Search = ({setData}) => {
       }
     
 
-      const getYoutube = async() =>{
-
-        const json = await (await fetch(
-          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${inputText}&key=AIzaSyD9hHo0bjEfpnBI4Pf8aD7pySkibaqFJBQ`)).json();
-    
-        setData(json.items)    
-        setInput("")
+      const searchYouTube = () =>{
+        const requestOptions = {
+          method: 'GET',
+          redirect: 'follow'
+        };
+        
+        fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${inputText}&type=video&key=AIzaSyD9hHo0bjEfpnBI4Pf8aD7pySkibaqFJBQ`, requestOptions)
+          .then(response => response.json())
+          .then(result => setData(result.items))
+          .catch(error => console.log('error', error));
+          setInput("")
+          console.log("서치영상")
       }
 
 
+
+      const getYoutube = () =>{
+
+        const requestOptions = {
+          method: 'GET',
+          redirect: 'follow'
+        };
+        
+        fetch("https://youtube.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=25&key=AIzaSyD9hHo0bjEfpnBI4Pf8aD7pySkibaqFJBQ", requestOptions)
+          .then(response => response.json())
+          .then(result => setData(result.items))
+          .catch(error => console.log('error', error));
+        
+    
+        console.log("모스트 영상")
+      }
+
+      
+
+
   useEffect(()=>{
-    getYoutube()
-    console.log("유튜브부름")
+    if(!mounted.current){
+      mounted.current = true;
+      getYoutube()
+    } else{
+      searchYouTube()
+    }
+  
   },[don])
 
 
@@ -66,8 +103,10 @@ const Search = ({setData}) => {
     return (
         <>
       <Form onSubmit={onSubmit}>
-        <SearchInput type="text" value={inputText} onChange={onChange}/>
-        <Button type="submit">🔎</Button>
+        <SearchInput type="text" value={inputText} onChange={onChange} ref={inputRef}/>
+        <Button type="submit">
+          <ScImg src="/images/search.png" ale="돋보기"/>
+        </Button>
       </Form>
         </>
     );
