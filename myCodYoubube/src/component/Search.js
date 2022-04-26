@@ -23,10 +23,12 @@ const ScImg = styled.img`
   
 `
 
-const Search = ({setData}) => {
+const Search = ({setData,youtube,setSelectedVideo,setApiMap}) => {
+
+
     const inputRef = useRef() 
     const mounted = useRef(false)
-
+    
     const [inputText,setInput] = useState("")
 
 
@@ -46,54 +48,21 @@ const Search = ({setData}) => {
               setInput("")
             )
         }
-      
-        
         setDon(don => !don) //항상 빤대로
         
       }
     
-
-      const searchYouTube = () =>{
-        const requestOptions = {
-          method: 'GET',
-          redirect: 'follow'
-        };
-        
-        fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${inputText}&type=video&key=AIzaSyD9hHo0bjEfpnBI4Pf8aD7pySkibaqFJBQ`, requestOptions)
-          .then(response => response.json())
-          .then(result => setData(result.items))
-          .catch(error => console.log('error', error));
-          setInput("")
-          console.log("서치영상")
-      }
-
-
-
-      const getYoutube = () =>{
-
-        const requestOptions = {
-          method: 'GET',
-          redirect: 'follow'
-        };
-        
-        fetch("https://youtube.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=25&key=AIzaSyD9hHo0bjEfpnBI4Pf8aD7pySkibaqFJBQ", requestOptions)
-          .then(response => response.json())
-          .then(result => setData(result.items))
-          .catch(error => console.log('error', error));
-        
-    
-        console.log("모스트 영상")
-      }
-
-      
-
-
+//api 데이터불러오기
   useEffect(()=>{
-    if(!mounted.current){
+    if(!mounted.current){ // 사이트접촉 초기 화면 api
       mounted.current = true;
-      getYoutube()
+      youtube.mostPopular().then(videos => setData(videos));
     } else{
-      searchYouTube()
+      youtube.search(inputText).then(videos => setData(videos))
+      console.log("검색됨")
+      setInput("")
+      setSelectedVideo(false)
+      setApiMap(true)
     }
   
   },[don])

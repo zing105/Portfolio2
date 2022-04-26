@@ -1,7 +1,10 @@
+
 import React, { useState } from 'react';
 import Search from './Search';
-import VidoList from './VidoList';
+import VideoList from './VidoList';
 import styled from "styled-components";
+import Youtube from '../service/youtube';
+import Videodetail from './video_detail/Video_detail';
 
 
 const SetHeader = styled.header`
@@ -39,23 +42,58 @@ const YouTitle = styled.h1`
     }
 `
 
+const Content = styled.section` 
+    display: flex ; 
+`
+const Detail = styled.div` 
+    flex: 1 1 70%;
+`
+const List = styled.div` 
+    flex: 1 1 30%;
+`
+    const youtube = new Youtube(process.env.REACT_APP_YOUTUBE_API_KEY)
+
 const Main = () => {
     const [data,setData] = useState([]) //api 데이터
 
+    const [apiMap,setApiMap]= useState(false) 
+    // api 불러오는 상태 바꾸기 (viedo.id /video.id.videoId)
 
+    const [selectedVideo,setSelectedVideo] = useState(false) //데이터받음
+    console.log(selectedVideo)
+
+    const onVideoClick = (video) =>{ //클릭시 클릭된 데이터 정보를 받음
+        setSelectedVideo(video)
+        
+
+    }
     return (
         <>
         <SetHeader>
-
             <Logo>
             <Image src="./images/logo.png" alt="이미지"/>
             <YouTitle>Youtube</YouTitle>
             </Logo>
-        <Search setData={setData}/>
-        
+                <Search setApiMap={setApiMap} setData={setData} youtube={youtube} setSelectedVideo={setSelectedVideo}/>
         </SetHeader>
 
-        <VidoList data={data}/>
+        <Content>
+
+        {selectedVideo && (
+            <Detail>
+                <Videodetail video={selectedVideo} apiMap={apiMap}/>
+            </Detail>
+        )}
+        
+            <List>
+            <VideoList data={data} onVideoClick={onVideoClick} selectedVideo={selectedVideo} />
+            </List>
+            
+        </Content>
+
+       
+
+        
        </>
     );
 };

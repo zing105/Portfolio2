@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useMemo} from 'react';
 import styled from "styled-components";
 
 
@@ -8,10 +8,13 @@ list-style: none;
     flex-wrap: wrap;
     justify-content: space-between;
     `
+
+
 const Li = styled.li` 
     display: flex;
-    flex-direction: column;
-    flex: 2;
+    flex-direction:  ${(props) => props.selectedVideo ? 'row' : 'column' };
+    /* flex-direction:  ${(props) => props.selectedVideo === false ? 'column':'row' }; */
+    flex:  ${(props) => props.selectedVideo ? '1 auto' : '2' };
     transition: transform 250ms ease-in ;
     padding: 0.2em;
     box-shadow: 3px 3px 5px 0px rgba(191, 191, 191, 0.53);
@@ -21,7 +24,7 @@ const Li = styled.li`
   }
 `
 
-const LiTitle = styled.p`
+const LiTitle = styled.li`
   font-size:1rem ;
   margin: 10px ;
   overflow: hidden;
@@ -31,7 +34,7 @@ const LiTitle = styled.p`
   -webkit-box-orient: vertical;
 `   
 
-const LiChTitle = styled.p`
+const LiChTitle = styled.li`
   font-size:1.2em ;
   font-weight: 700 ;
   margin: 10px ;
@@ -43,15 +46,23 @@ const LiChTitle = styled.p`
 `   
 
 
-const VidoList = ({data}) => {
+const VidoList = ({data,onVideoClick,selectedVideo,display}) => {
+
+
+
     return (
         <main>
           <ListUl>
-        {data.map((item,index) => (<Li key={index}><img src={item.snippet.thumbnails.medium.url} alt="img"/>
-        <LiChTitle>{item.snippet.channelTitle}</LiChTitle>
-        <LiTitle>{item.snippet.title}</LiTitle>
-        
-        </Li>) )}
+            {data.map((item) => (
+            <Li key={item.etag} selectedVideo={selectedVideo} onClick={() => onVideoClick(item)} >
+              <img src={selectedVideo ? item.snippet.thumbnails.default.url : item.snippet.thumbnails.medium.url } alt="img"/>
+              <ul>
+              <LiChTitle>{item.snippet.channelTitle}</LiChTitle>
+                <LiTitle>{item.snippet.title}</LiTitle>
+              </ul>
+               
+            </Li>) )}
+
           </ListUl>   
         </main>
     );
