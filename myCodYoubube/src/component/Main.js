@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { memo, useState, useMemo, useCallback } from 'react';
 import Search from './Search';
 import VideoList from './VidoList';
 import styled from "styled-components";
@@ -53,49 +53,61 @@ const List = styled.div`
 `
     const youtube = new Youtube(process.env.REACT_APP_YOUTUBE_API_KEY)
 
-const Main = () => {
+const Main = memo(() => {
     const [data,setData] = useState([]) //api 데이터
 
     const [apiMap,setApiMap]= useState(false) 
     // api 불러오는 상태 바꾸기 (viedo.id /video.id.videoId)
 
     const [selectedVideo,setSelectedVideo] = useState(false) //데이터받음
-    console.log(selectedVideo)
 
-    const onVideoClick = (video) =>{ //클릭시 클릭된 데이터 정보를 받음
+    const logoClick = () => {
+        setSelectedVideo(false)
+    }
+
+    const [loading, setLoading] = useState(false); //로딩 화면 용
+
+
+    const onVideoClick = useCallback((video) =>{ //클릭시 클릭된 데이터 정보를 받음
         setSelectedVideo(video)
         
 
-    }
+    },[]);
+
+
+
     return (
         <>
         <SetHeader>
-            <Logo>
+            <Logo onClick={logoClick}>
             <Image src="./images/logo.png" alt="이미지"/>
             <YouTitle>Youtube</YouTitle>
             </Logo>
-                <Search setApiMap={setApiMap} setData={setData} youtube={youtube} setSelectedVideo={setSelectedVideo}/>
+                <Search setApiMap={setApiMap} setData={setData} youtube={youtube} setSelectedVideo={setSelectedVideo}  setLoading={setLoading}/>
         </SetHeader>
 
-        <Content>
+        {loading ? (<h1>로딩중...</h1>) : (
+                    <Content>
 
-        {selectedVideo && (
-            <Detail>
-                <Videodetail video={selectedVideo} apiMap={apiMap}/>
-            </Detail>
+                    {selectedVideo && (
+                        <Detail>
+                            <Videodetail video={selectedVideo} apiMap={apiMap}/>
+                        </Detail>
+                    )}
+                    
+                        <List> 
+                        <VideoList data={data} onVideoClick={onVideoClick} selectedVideo={selectedVideo} />
+                        </List>
+                        
+                    </Content>
         )}
-        
-            <List>
-            <VideoList data={data} onVideoClick={onVideoClick} selectedVideo={selectedVideo} />
-            </List>
-            
-        </Content>
+
 
        
 
         
        </>
     );
-};
+    });
 
 export default Main;

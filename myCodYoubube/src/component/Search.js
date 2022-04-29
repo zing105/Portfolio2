@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
+
 
 
 const Form = styled.form`
@@ -23,14 +24,14 @@ const ScImg = styled.img`
   
 `
 
-const Search = ({setData,youtube,setSelectedVideo,setApiMap}) => {
+const Search = memo( ({setData,youtube,setSelectedVideo,setApiMap,setLoading}) => {
 
 
     const inputRef = useRef() 
     const mounted = useRef(false)
     
     const [inputText,setInput] = useState("")
-
+    
 
     const onChange = (e) =>{
         setInput(e.target.value)
@@ -49,22 +50,24 @@ const Search = ({setData,youtube,setSelectedVideo,setApiMap}) => {
             )
         }
         setDon(don => !don) //항상 빤대로
-        
       }
     
 //api 데이터불러오기
   useEffect(()=>{
+   
     if(!mounted.current){ // 사이트접촉 초기 화면 api
       mounted.current = true;
       youtube.mostPopular().then(videos => setData(videos));
-    } else{
+    }  else{
+      setLoading(true) // 로딩대기 화면 나오게함
+      setSelectedVideo(null) // 검색시 초기화면으로 레이아웃 만들기 위한 false
       youtube.search(inputText).then(videos => setData(videos))
-      console.log("검색됨")
       setInput("")
-      setSelectedVideo(false)
       setApiMap(true)
+      let timer = setTimeout(()=>{ setLoading(false) }, 600);
+      return ()=>{ clearTimeout(timer) }
     }
-  
+    
   },[don])
 
 
@@ -79,6 +82,6 @@ const Search = ({setData,youtube,setSelectedVideo,setApiMap}) => {
       </Form>
         </>
     );
-};
+});
 
 export default Search;
