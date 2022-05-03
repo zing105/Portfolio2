@@ -1,9 +1,9 @@
 
-import React, { memo, useState, useMemo, useCallback } from 'react';
+import React, { memo, useState, useCallback } from 'react';
 import Search from './Search';
 import VideoList from './VidoList';
 import styled from "styled-components";
-import Youtube from '../service/youtube';
+import Youtube from '../service/youtube-fetch';
 import Videodetail from './video_detail/Video_detail';
 
 
@@ -22,6 +22,7 @@ const Logo = styled.div`
     display: flex;
     align-items: center;
     margin-right: 0.5em ;
+    cursor: pointer;
 `
 
 
@@ -44,6 +45,9 @@ const YouTitle = styled.h1`
 
 const Content = styled.section` 
     display: flex ; 
+    @media screen and (max-width: 800px) {
+        flex-direction: column; 
+    }
 `
 const Detail = styled.div` 
     flex: 1 1 70%;
@@ -61,18 +65,19 @@ const Main = memo(() => {
 
     const [selectedVideo,setSelectedVideo] = useState(false) //데이터받음
 
-    const logoClick = () => {
+    const logoClick = useCallback(() => {
         setSelectedVideo(false)
-    }
+    },[])
 
     const [loading, setLoading] = useState(false); //로딩 화면 용
 
 
     const onVideoClick = useCallback((video) =>{ //클릭시 클릭된 데이터 정보를 받음
-        setSelectedVideo(video)
+        setSelectedVideo(video);
+        window.scrollTo(0,0);
         
 
-    },[]);
+    },[setSelectedVideo]);
 
 
 

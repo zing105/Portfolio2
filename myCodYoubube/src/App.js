@@ -7,7 +7,7 @@ const MainCover = styled.div`
   text-align : center;
   width:80%;
   margin:0 auto ;
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 800px) {
         width:100%;
     }
 `
