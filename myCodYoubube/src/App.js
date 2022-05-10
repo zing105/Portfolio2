@@ -2,7 +2,7 @@ import React from 'react';
 import Main from './component/Main';
 import './component/reset.css'
 import styled from "styled-components";
-//테스트
+//소스트리 테스트용 텍스트
 const MainCover = styled.div`
   text-align : center;
   width:80%;
